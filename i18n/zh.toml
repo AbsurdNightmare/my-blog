@@ -1,0 +1,38 @@
+# 覆盖主题自带的 i18n/zh.toml（站点级优先），修正单数形式的显示
+# 主题原文里 word_count 的 one = "字"，字数为 1 时不会显示数字
+
+[blog]
+one = "文章"
+other = "文章"
+
+[art]
+one = "随笔"
+other = "随笔"
+
+[tags]
+one = "标签"
+other = "标签"
+
+[archive]
+one = "归档"
+other = "归档"
+
+[series]
+one = "系列"
+other = "系列"
+
+[reading_time]
+one = "{{ .Count }} 分钟"
+other = "{{ .Count }} 分钟"
+
+[word_count]
+one = "{{ .Count }} 字"
+other = "{{ .Count }} 字"
+
+[related_resources]
+one = "相关系列文章推荐"
+other = "相关系列文章推荐"
+
+[featured_posts]
+one = "推荐阅读"
+other = "推荐阅读"

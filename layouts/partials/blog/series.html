@@ -1,0 +1,30 @@
+{{/*
+  覆盖主题的 series.html。
+  主题原文用 `urlize` 处理系列名再查 site.Taxonomies，中文系列名会被百分号编码
+  （「博客搭建」-> "%E5%8D%9A..."），和字典里的键对不上，导致系列推荐永远是空的。
+  这里直接用原始名称查找。
+*/}}
+{{ $currentPageUrl := .RelPermalink }}
+{{ if .Params.series }}
+<div class="related-resources">
+  {{ range .Params.series }}
+    {{ with index site.Taxonomies.series . }}
+    {{ if gt (len .Pages) 1 }}
+    <h3>{{- i18n "related_resources" -}}</h3>
+      <nav>
+        <ul>
+        {{ $maxItems := site.Params.maxRelatedResources | default 10 }}
+        {{ range first (add $maxItems 1) .Pages }}
+          {{ if ne .RelPermalink $currentPageUrl }}
+            <li>
+              <a href="{{ .Params.externalLink | default .RelPermalink }}">{{ .Title }}</a>
+            </li>
+          {{ end }}
+        {{ end }}
+        </ul>
+      </nav>
+    {{ end }}
+    {{ end }}
+  {{ end }}
+</div>
+{{ end }}

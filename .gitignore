@@ -1,0 +1,11 @@
+# Hugo 构建产物（由 GitHub Actions 在服务器上生成，不需要提交）
+/public/
+/resources/
+.hugo_build.lock
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

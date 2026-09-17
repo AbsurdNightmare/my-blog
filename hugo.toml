@@ -1,20 +1,82 @@
 baseURL = 'https://absurdnightmare.github.io/'
-locale = 'zh-cn'
-title = '我的个人博客'
-theme = 'hugo-theme-ladder' 
+# 语言代码必须和 themes/.../i18n/zh.toml 对得上，否则界面文字会全部变成空白
+defaultContentLanguage = 'zh'
+# locale 决定日期格式，用标准的 BCP-47 写法（地区码大写）
+locale = 'zh-CN'
+title = 'AbsurdNightmare'
+theme = 'hugo-theme-ladder'
 
-[params.author]
-    name = "AbsurdNightmare"
-    email = "10245101421@stu.ecnu.edu.cn"
+# 中文分词，让「字数 / 阅读时间」统计准确
+hasCJKLanguage = true
+# 列表页摘要长度（字符）
+summaryLength = 80
+enableRobotsTXT = true
+
+[pagination]
+  pagerSize = 10
+
+# 标签 + 系列
+# 注意：写在这里会把 Hugo 默认的 categories 覆盖掉，只保留 tag 和 series
+[taxonomies]
+  tag = 'tags'
+  series = 'series'
+
+[params]
+  # 导航栏左上角显示的文字
+  brand = 'HOME'
+  # 首页大标题
+  author = 'AbsurdNightmare'
+  # 首页标题下方的小字（支持 Markdown）
+  authorDescription = '华东师范大学 · 在这里记录技术和生活'
+  # 首页自我介绍（支持 Markdown）
+  info = '欢迎来到我的博客。这里放一些学习笔记、踩坑记录和偶尔的胡思乱想。'
+  # 首页头像，文件放在 static/images/ 下
+  avatarURL = '/images/avatar.png'
+  # 浏览器标签页图标
+  favicon = '/images/avatar.png'
+  # 归档页和「上一篇 / 下一篇」按这些版块的文章排序
+  mainSections = ['blog', 'art']
+
+  [params.options]
+    showDarkMode = true
+    enableImgZooming = true
+    showMetaTags = true
+    enableMultiLang = false
+
+  # 导航栏右侧的图标链接，可以按同样的格式继续加
+  [[params.social]]
+    name = 'GitHub'
+    url = 'https://github.com/AbsurdNightmare'
+    pre = '''<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>'''
+
+  [[params.social]]
+    name = 'Email'
+    url = 'mailto:10245101421@stu.ecnu.edu.cn'
+    pre = '''<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>'''
 
 [menu]
-    [[menu.main]]
-        identifier = "about"
-        name = "关于"
-        url = "/about/"
-        weight = 1
-    [[menu.main]]
-        identifier = "blog"
-        name = "博客"
-        url = "/blog/"
-        weight = 2
+  [[menu.main]]
+    identifier = 'blog'
+    name = '博客'
+    url = '/blog/'
+    weight = 1
+  [[menu.main]]
+    identifier = 'art'
+    name = '随笔'
+    url = '/art/'
+    weight = 2
+  [[menu.main]]
+    identifier = 'tags'
+    name = '标签'
+    url = '/tags/'
+    weight = 3
+  [[menu.main]]
+    identifier = 'archives'
+    name = '归档'
+    url = '/archives/'
+    weight = 4
+  [[menu.main]]
+    identifier = 'about'
+    name = '关于'
+    url = '/about/'
+    weight = 5

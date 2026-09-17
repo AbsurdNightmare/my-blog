@@ -1,0 +1,23 @@
+{{/* 覆盖主题的 meta.html：没有日期的页面（如「关于」）不再显示 “January 1, 1” */}}
+<p>
+  <small>
+    {{- if not .Date.IsZero -}}
+      {{ .Date | time.Format ":date_long" }}&nbsp;·&nbsp;
+    {{- end -}}
+    {{- if gt .WordCount 0 -}}
+      {{ i18n "word_count" .WordCount }}&nbsp;·&nbsp;
+    {{- end -}}
+    {{- i18n "reading_time" .ReadingTime -}}
+  </small>
+
+  {{ if .Site.Params.options.showMetaTags -}}
+    <small>
+      {{ with .GetTerms "tags"}}
+      ·
+      {{ end }}
+      {{ range (.GetTerms "tags") }}
+      <a href="{{ .Permalink }}">{{ .LinkTitle }}</a>
+      {{ end }}
+    </small>
+  {{ end -}}
+<p>
