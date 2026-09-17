@@ -2,17 +2,17 @@
 title = '关于我'
 +++
 
-你好，我是 **AbsurdNightmare**。
+24级软院本科，目前大三
 
-华东师范大学在读学生，对后端开发、系统设计和各种"为什么这样设计"的问题感兴趣。
-这个博客用来存放我的学习笔记、踩过的坑，以及偶尔的一些胡思乱想。
+ECNU软院吊车尾 | 抽象艺术爱好者 | 美食鉴赏大师 | LOL总被ELO者
+
+在这个博客分享一些技术思路，也分享一些ECNU生存指南
 
 ## 联系我
 
 - GitHub：<https://github.com/AbsurdNightmare>
 - Email：10245101421@stu.ecnu.edu.cn
 
-## 关于这个站点
+## 感谢
 
-用 [Hugo](https://gohugo.io/) 和 [Ladder 主题](https://github.com/guangzhengli/hugo-theme-ladder) 搭建，
-托管在 GitHub Pages 上，推送到 `master` 分支后自动构建部署。
+本博客基于 [Hugo](https://gohugo.io/) 和 [Ladder 主题](https://github.com/guangzhengli/hugo-theme-ladder) 搭建
