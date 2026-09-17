@@ -29,7 +29,7 @@ enableRobotsTXT = true
   # 首页大标题
   author = 'AbsurdNightmare'
   # 首页标题下方的小字（支持 Markdown）
-  authorDescription = '章鱼的博客'
+  authorDescription = 'ECNU 大三 软件工程'
   # 首页自我介绍（支持 Markdown）
   info = '欢迎来到我的博客！希望这里的内容可以对你的学习/生活带来帮助。'
   # 首页头像，文件放在 static/images/ 下。
