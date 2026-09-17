@@ -1,15 +1,24 @@
 {{ define "content" }}
-<div class="blog-wrapper">
+<div class="card-wrapper">
   <div>
-    <div class="blog-list">
+    <div class="card-list">
       {{ $paginator := .Paginate .RegularPages.ByDate }}
       {{ range $paginator.Pages }}
         <article>
-          <div class="blog-card">
-              <h3><a href="{{ .RelPermalink }}">{{ .Params.title }}</a></h3>
-              {{ partial "blog/meta.html" . }}
-              {{ .Summary }}
-          </div>
+          <a href="{{ .RelPermalink }}">
+            <div class="card">
+                <div class="card-header">
+                  <div class="card-title">
+                    {{ .Params.title }}
+                  </div>
+                  <div class="card-date">
+                    {{ .Date.Format "2006-01-02" }}
+                  </div>
+                </div>
+
+                <p>{{ .Params.summary }}</p>
+            </div>
+          </a>
         </article>
       {{ end -}}
     </div>

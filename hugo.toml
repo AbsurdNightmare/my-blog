@@ -1,44 +1,27 @@
-# 仓库名是 my-blog，属于「项目站点」，所以地址里带仓库名。
-# 如果以后把仓库改名成 AbsurdNightmare.github.io，这里要改成 https://absurdnightmare.github.io/
 baseURL = 'https://absurdnightmare.github.io/my-blog/'
-# 语言代码必须和 themes/.../i18n/zh.toml 对得上，否则界面文字会全部变成空白
 defaultContentLanguage = 'zh'
-# locale 决定日期格式，用标准的 BCP-47 写法（地区码大写）
 locale = 'zh-CN'
 title = 'AbsurdNightmare'
 theme = 'hugo-theme-ladder'
 
-# 中文分词，让「字数 / 阅读时间」统计准确
 hasCJKLanguage = true
-# 列表页摘要长度（字符）
 summaryLength = 80
 enableRobotsTXT = true
 
 [pagination]
   pagerSize = 10
 
-# 标签 + 系列
-# 注意：写在这里会把 Hugo 默认的 categories 覆盖掉，只保留 tag 和 series
 [taxonomies]
   tag = 'tags'
   series = 'series'
 
 [params]
-  # 导航栏左上角显示的文字
   brand = 'HOME'
-  # 首页大标题
   author = 'AbsurdNightmare'
-  # 首页标题下方的小字（支持 Markdown）
   authorDescription = 'ECNU 大三 软件工程'
-  # 首页自我介绍（支持 Markdown）
-  info = '欢迎来到我的博客！希望这里的内容可以对你的学习/生活带来帮助。'
-  # 首页头像，文件放在 static/images/ 下。
-  # 注意开头不要写 "/"：主题用 relURL 处理这两个值，带斜杠会被当成站点根目录，
-  # 在 my-blog 这种「项目站点」下就会丢掉 /my-blog 前缀而 404。
+  info = '欢迎来到我的博客! 希望这里的内容可以对你的学习/生活带来帮助。'
   avatarURL = 'images/avatar.png'
-  # 浏览器标签页图标
   favicon = 'images/avatar.png'
-  # 归档页和「上一篇 / 下一篇」按这些版块的文章排序
   mainSections = ['blog', 'art']
 
   [params.options]
@@ -47,7 +30,6 @@ enableRobotsTXT = true
     showMetaTags = true
     enableMultiLang = false
 
-  # 导航栏右侧的图标链接，可以按同样的格式继续加
   [[params.social]]
     name = 'GitHub'
     url = 'https://github.com/AbsurdNightmare'
@@ -61,7 +43,7 @@ enableRobotsTXT = true
 [menu]
   [[menu.main]]
     identifier = 'blog'
-    name = '博客'
+    name = '技术文章'
     url = '/blog/'
     weight = 1
   [[menu.main]]

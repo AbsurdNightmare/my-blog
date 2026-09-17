@@ -7,9 +7,6 @@
         <article>
           <a href="{{ .RelPermalink }}">
             <div class="card">
-                <div class="card-thumbnail">
-                    <img class="card-img" src="{{ .Params.image }}">
-                </div>
                 <div class="card-header">
                   <div class="card-title">
                     {{ .Params.title }}
@@ -19,7 +16,7 @@
                   </div>
                 </div>
 
-                <p>{{ .Params.desc }}</p>
+                <p>{{ .Params.summary }}</p>
             </div>
           </a>
         </article>
