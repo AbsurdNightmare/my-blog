@@ -6,8 +6,8 @@ one = "文章"
 other = "文章"
 
 [art]
-one = "随笔"
-other = "随笔"
+one = "经验之谈"
+other = "经验之谈"
 
 [tags]
 one = "标签"
