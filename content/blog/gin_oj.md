@@ -7,4 +7,4 @@ tags = ['项目']
 featured = false
 +++
 
-今天分享一个我做的在线判题平台 Gin_OJ
+今天分享一个我做的在线判题平台 [Gin_OJ](https://github.com/AbsurdNightmare/Gin-OJ)
