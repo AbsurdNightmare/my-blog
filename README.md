@@ -2,7 +2,7 @@
 
 用 [Hugo](https://gohugo.io/) + [Ladder 主题](https://github.com/guangzhengli/hugo-theme-ladder) 搭建，
 源码放在 GitHub，推送到 `master` 后由 GitHub Actions 自动构建并发布到
-<https://absurdnightmare.github.io/>。
+<https://absurdnightmare.github.io/my-blog/>。
 
 ---
 
@@ -88,7 +88,7 @@ git push
 ```
 
 推上去之后 GitHub Actions 会自动构建，一两分钟后线上就能看到了。
-在 <https://github.com/AbsurdNightmare/AbsurdNightmare.github.io/actions> 可以看构建进度。
+在 <https://github.com/AbsurdNightmare/my-blog/actions> 可以看构建进度。
 
 ---
 
@@ -136,11 +136,21 @@ $$
 $$
 ```
 
-**图片** —— 把图片文件放到 `static/images/` 下，然后：
+**图片** —— 把文章改成「文件夹 + `index.md`」，图片和它放在一起：
+
+```
+content/blog/我的文章/
+├── index.md
+└── screenshot.png
+```
 
 ```markdown
-![图片说明](/images/文件名.png)
+![图片说明](screenshot.png)
 ```
+
+⚠️ **不要写 `/images/xxx.png` 这种以斜杠开头的路径。** 本站发布在 `/my-blog/` 子路径下，
+斜杠开头会被当成站点根目录，指向 `absurdnightmare.github.io/images/xxx.png` 而 404。
+详见文末「几个坑」。
 
 **摘要** —— 优先级：front matter 的 `summary` > 正文里的 `<!--more-->` > 自动截取。
 
@@ -192,6 +202,23 @@ blog/
 ---
 
 ## 六、几个坑（已经踩过了）
+
+**CI 的 Hugo 版本必须和本地一致。** 工作流里的 `HUGO_VERSION` 要和 `hugo version`
+对得上。曾经因为 CI 用 0.128、本地用 0.166，`hugo.toml` 里的 `locale` 和
+`[pagination] pagerSize` 在旧版上不认，`Build with Hugo` 那步直接失败
+（Pages 配置没问题，纯粹是构建挂了）。**升级本地 Hugo 后记得同步改这里。**
+
+**站点的根路径是 `/my-blog/`，不是 `/`。** 仓库叫 `my-blog`，属于「项目站点」，
+所以 `baseURL` 必须写成 `https://absurdnightmare.github.io/my-blog/`。
+连带影响两件事：
+
+- `hugo.toml` 里 `avatarURL` / `favicon` **开头不能带 `/`**（写 `images/avatar.png`）。
+  主题用 `relURL` 处理这两个值，带斜杠会被当成站点根目录，丢掉 `/my-blog` 前缀而 404。
+- 文章里的图片用相对路径，别写 `/images/xxx.png`。
+
+> 想彻底躲开这些问题，可以把仓库改名成 `AbsurdNightmare.github.io`，
+> 那样站点直接在根目录，`/images/xxx.png` 就正常了。
+> 改完记得同步更新本地 remote、`hugo.toml` 的 `baseURL` 和这里的文档。
 
 **别直接改 `themes/hugo-theme-ladder/` 里的文件。** 它是 git submodule，
 主题更新时你的修改会被覆盖。要改就在根目录的 `layouts/` 下建同名文件。

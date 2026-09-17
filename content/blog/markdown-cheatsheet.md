@@ -89,11 +89,22 @@ $$
 
 ## 图片
 
-把图片放到和文章同一个目录下的文件夹里，或者统一放到 `static/images/` 下：
+这个站点是发布在 `/my-blog/` 这个子路径下的，所以**不要写 `/images/xxx.png` 这种以斜杠开头的路径**，
+它会指向 `absurdnightmare.github.io/images/xxx.png`，是 404。
+
+正确做法是把文章变成「文件夹 + index.md」，图片和它放在一起，用相对路径引用：
+
+```
+content/blog/我的文章/
+├── index.md
+└── screenshot.png
+```
 
 ```markdown
-![图片说明](/images/example.png)
+![图片说明](screenshot.png)
 ```
+
+Hugo 会自动把 `screenshot.png` 一起发布到文章旁边，路径怎么变都不会错。
 
 ## 摘要怎么写
 

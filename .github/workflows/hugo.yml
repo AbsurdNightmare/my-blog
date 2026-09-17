@@ -31,7 +31,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      HUGO_VERSION: 0.128.0
+      # 必须和本地 hugo version 一致。
+      # hugo.toml 里的 locale / [pagination] pagerSize 等写法要求 Hugo >= 0.158，
+      # 用 0.128 会在 “Build with Hugo” 这步直接失败。
+      HUGO_VERSION: 0.166.0
     steps:
       - name: Install Hugo CLI
         run: |
