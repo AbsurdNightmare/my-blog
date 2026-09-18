@@ -5,7 +5,7 @@ title = 'Leetcode 面试150题——数组与字符串 总结'
 summary = '归纳这个部分每道题的题解，使用Go语言'
 tags = ['Leetcode', '题解汇总']
 series = ['面试150题']
-featured = false
+featured = true
 math = true
 +++
 
@@ -264,6 +264,213 @@ func majorityElement(nums []int) (ans int) {
             vote++
         } else {
             vote--
+        }
+    }
+    return
+}
+```
+{{< /tab >}}
+{{< /tabgroup >}}
+
+---
+
+# 轮转数组
+> 难度：中等
+
+> 标签：数组、数学、双指针
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给定一个整数数组`nums`，将数组中的元素向右轮转 k 个位置，其中 k 是非负数。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+**反转数组**
+
+先对整个数组进行反转，然后将前 k 个元素反转，再对剩下的元素进行反转即可。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+func rotate(nums []int, k int)  {
+    k %= len(nums)
+    slices.Reverse(nums)
+    slices.Reverse(nums[:k])
+    slices.Reverse(nums[k:])
+}
+```
+
+---
+
+# 买卖股票的最佳时机
+> 难度：简单
+
+> 标签：数组、动态规划
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给定一个数组`prices`，它的第 i 个元素`prices[i]`表示一支给定股票第 i 天的价格。
+
+你只能选择**某一天**买入这只股票，并选择在**未来的某一个不同的日子**卖出该股票。设计一个算法来计算你所能获取的最大利润。
+
+返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 0 。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+**动态规划**
+
+我们先定义三个变量：`price`当天价格，`minCost`最低成本，`maxProfit`最大利润。
+
+每获取到一个`price`，我们就比较是不是`minCost`，是的话设置新的最低成本。然后计算当前利润，和`maxProfit`比较，大于的话设置新的最大利润，最后返回`maxProfit`。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+func maxProfit(prices []int) int {
+    minCost, maxProfit := prices[0], 0
+    for _, price := range prices {
+        minCost = min(minCost, price)
+        maxProfit = max(maxProfit, price - minCost)
+    }
+    return maxProfit
+}
+```
+
+---
+
+# 买卖股票的最佳时机 II
+> 难度：中等
+
+> 标签：数组、动态规划、贪心
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给你一个整数数组`prices`，其中`prices[i]`表示某支股票第 i 天的价格。
+
+在每一天，你可以决定是否购买和/或出售股票。你在任何时候**最多**只能持有**一股**股票。然而，你可以在**同一天**多次买卖该股票，但要确保你持有的股票不超过一股。
+
+返回你能获得的**最大**利润。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+**动态规划 + 贪心算法**
+
+这道题的判断是，只要明天的价格比今天高，那我就今天买明天卖。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+func maxProfit(prices []int) int {
+    profit := 0
+    n := len(prices)
+    for i := range n-1 {
+        x, y := prices[i], prices[i+1]
+        if x < y {
+            profit += y-x
+        }
+    }
+    return profit
+}
+```
+---
+
+# 跳跃游戏
+> 难度：中等
+
+> 标签：数组、动态规划、贪心
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给你一个非负整数数组`nums`，你最初位于数组的**第一个下标**。数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+判断你是否能够到达最后一个下标，如果可以，返回`true`；否则，返回`false`。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+**动态规划 + 贪心算法**
+
+定义一个变量`distance`记录最远可达下标。遍历数组的每一个元素，记录当前位置可以到达的最远下标，与`distance`进行比较，大于的话则更新`distance`。如果当前下标大于`distance`，那就说明到不了，`return false`。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+func canJump(nums []int) bool {
+    distance := 0
+    for i, jump := range nums {
+        if i > distance {
+            return false
+        }
+        distance = max(distance, i+jump)
+    }
+    return true
+}
+```
+
+---
+
+# 跳跃游戏 II
+> 难度：中等
+
+> 标签：数组、动态规划、贪心
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给定一个长度为 n 的 0 索引整数数组`nums`。初始位置在下标 0。
+
+每个元素`nums[i]`表示从索引 i 向后跳转的最大长度。换句话说，如果你在索引 i 处，你可以跳转到任意 (i + j) 处：
+
+- `0 <= j <= nums[i]`且
+- `i + j < n`
+
+返回到达 n - 1 的最小跳跃次数。测试用例保证可以到达 n - 1。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+这道题解法也是**动态规划 + 贪心算法**，但是有两种贪心的策略：
+1. **正向贪心**。定义两个变量`curEnd`和`nextEnd`，分别代表当前的最远边界和下一个最远边界。从贪心的角度，每次跳我们都跳到最远，那最后需要的次数就是最少的。从第一个元素出发，不断更新下一个最远边界，当走到当前边界，我就跳到下一个最远边界，步数+1。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+2. **反向贪心**。因为我们总要跳到最后一个位置，不妨就从最后出发，往前找能够跳到最后的下标。如果存在多个下标，为了少跳，就要选择最远的那个下标，不断更新和查找直到回到下标0。时间复杂度$O(n^2)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+{{< tabgroup >}}
+{{< tab name="正向贪心" >}}
+```go
+func jump(nums []int) (ans int) {
+    curEnd := 0
+    nextEnd := 0
+    for i, num := range nums[:len(nums)-1] {
+        nextEnd = max(nextEnd, i+num)
+        if i == curEnd {
+            curEnd = nextEnd
+            ans++
+        }
+    }
+    return
+}
+```
+
+{{< /tab >}}
+{{< tab name="反向贪心" >}}
+```go
+func jump(nums []int) (ans int) {
+    pos := len(nums) - 1
+    for pos > 0 {
+        for i := 0; i < pos; i++ {
+            if i + nums[i] >= pos {
+                pos = i
+                ans++
+                break
+            }
         }
     }
     return

@@ -4,6 +4,7 @@ draft = false
 title = '基于Gin框架的在线判题平台'
 summary = ''
 tags = ['项目']
+series = ['项目']
 featured = false
 +++
 

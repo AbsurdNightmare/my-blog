@@ -13,6 +13,9 @@
   <section class="blog-content">{{ .Content }}</section>
 
   {{ $pages := .CurrentSection.RegularPages }}
+  {{ if .Params.series }}
+    {{ $pages = where $pages "Params.series" "intersect" .Params.series }}
+  {{ end }}
   {{ if and (gt (len $pages) 1) (in $pages . ) }}
   <div class="paginator">
     {{ with $pages.Prev . }}
