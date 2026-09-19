@@ -14,6 +14,8 @@ math = true
 
 > 标签：数组、双指针、排序
 
+> 链接：[合并两个有序数组](https://leetcode.cn/problems/merge-sorted-array/description/?envType=study-plan-v2&envId=top-interview-150)
+
 {{< tabgroup >}}
 {{< tab name="题干" >}}
 给你两个按`非递减顺序`排列的整数数组`nums1`和`nums2`，另有两个整数 m 和 n ，分别表示`nums1`和`nums2`中的元素数目。
@@ -53,6 +55,8 @@ func merge(nums1 []int, m int, nums2 []int, n int) {
 > 难度：简单
 
 > 标签：数组、双指针
+
+> 链接：[移除元素](https://leetcode.cn/problems/remove-element/?envType=study-plan-v2&envId=top-interview-150)
 
 {{< tabgroup >}}
 {{< tab name="题干" >}}
@@ -112,6 +116,8 @@ func removeElement(nums []int, val int) int {
 
 > 标签：数组、双指针
 
+> 链接：[删除有序数组中的重复项](https://leetcode.cn/problems/remove-duplicates-from-sorted-array/?envType=study-plan-v2&envId=top-interview-150)  
+
 {{< tabgroup >}}
 {{< tab name="题干" >}}
 给你一个`非严格递增排列`的数组`nums`，请你**原地**删除重复出现的元素，使每个元素**只出现一次**，返回删除后数组的新长度。元素的**相对顺序**应该保持**一致**。然后返回`nums`中唯一元素的个数。
@@ -151,6 +157,8 @@ func removeDuplicates(nums []int) int {
 
 > 标签：数组、双指针
 
+> 链接：[删除有序数组中的重复项 II](https://leetcode.cn/problems/remove-duplicates-from-sorted-array-ii/?envType=study-plan-v2&envId=top-interview-150)  
+
 {{< tabgroup >}}
 {{< tab name="题干" >}}
 给你一个有序数组`nums`，请你**原地**删除重复出现的元素，使得出现次数超过两次的元素只出现**两次** ，返回删除后数组的新长度。
@@ -189,6 +197,8 @@ func removeDuplicates(nums []int) int {
 > 难度：简单
 
 > 标签：数组、哈希表、分治、计数、排序、摩尔投票算法
+
+> 链接：[多数元素](https://leetcode.cn/problems/majority-element/?envType=study-plan-v2&envId=top-interview-150)  
 
 {{< tabgroup >}}
 {{< tab name="题干" >}}
@@ -279,6 +289,8 @@ func majorityElement(nums []int) (ans int) {
 
 > 标签：数组、数学、双指针
 
+> 链接：[轮转数组](https://leetcode.cn/problems/rotate-array/?envType=study-plan-v2&envId=top-interview-150)  
+
 {{< tabgroup >}}
 {{< tab name="题干" >}}
 给定一个整数数组`nums`，将数组中的元素向右轮转 k 个位置，其中 k 是非负数。
@@ -308,6 +320,8 @@ func rotate(nums []int, k int)  {
 > 难度：简单
 
 > 标签：数组、动态规划
+
+> 链接：[买卖股票的最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/?envType=study-plan-v2&envId=top-interview-150)
 
 {{< tabgroup >}}
 {{< tab name="题干" >}}
@@ -347,6 +361,8 @@ func maxProfit(prices []int) int {
 
 > 标签：数组、动态规划、贪心
 
+> 链接：[买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/?envType=study-plan-v2&envId=top-interview-150)
+
 {{< tabgroup >}}
 {{< tab name="题干" >}}
 给你一个整数数组`prices`，其中`prices[i]`表示某支股票第 i 天的价格。
@@ -385,6 +401,8 @@ func maxProfit(prices []int) int {
 
 > 标签：数组、动态规划、贪心
 
+> 链接：[跳跃游戏](https://leetcode.cn/problems/jump-game/?envType=study-plan-v2&envId=top-interview-150)
+
 {{< tabgroup >}}
 {{< tab name="题干" >}}
 给你一个非负整数数组`nums`，你最初位于数组的**第一个下标**。数组中的每个元素代表你在该位置可以跳跃的最大长度。
@@ -420,6 +438,8 @@ func canJump(nums []int) bool {
 > 难度：中等
 
 > 标签：数组、动态规划、贪心
+
+> 链接：[跳跃游戏 II](https://leetcode.cn/problems/jump-game-ii/?envType=study-plan-v2&envId=top-interview-150)
 
 {{< tabgroup >}}
 {{< tab name="题干" >}}
@@ -474,6 +494,298 @@ func jump(nums []int) (ans int) {
         }
     }
     return
+}
+```
+{{< /tab >}}
+{{< /tabgroup >}}
+
+---
+
+# H指数
+> 难度：中等
+
+> 标签：数组、计数排序、排序
+
+> 链接：[H指数](https://leetcode.cn/problems/h-index/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给你一个整数数组`citations`，其中`citations[i]`表示研究者的第 i 篇论文被引用的次数。计算并返回该研究者的 h 指数。
+
+根据维基百科上 h 指数的定义：h 代表“高引用次数” ，一名科研人员的 h 指数是指他（她）至少发表了 h 篇论文，并且**至少**有 h 篇论文被引用次数大于等于 h 。如果 h 有多种可能的值，h 指数是其中最大的那个。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+这道题有两种解法：
+1. **排序**。首先我们可以将初始的 h 设为 0，然后将引用次数排序，并且对排序后的数组从大到小遍历。根据 H 指数的定义，如果当前 H 指数为 h 并且在遍历过程中找到当前值`citations[i] > h`，则说明我们找到了一篇被引用了至少 h+1 次的论文，所以将现有的 h 值加 1。继续遍历直到 h 无法继续增大。最后返回 h 作为最终答案。时间复杂度$O(n\log n)$，空间复杂度是$O(\log n)$。
+2. **计数排序**。对比第一种解法，由于 h 指数肯定不能大于总的论文数目，所以对于引用次数大于论文数的我们就按论文数算。同时引入一个 cnt 数组来记录当前引用次数对应几篇论文，然后还是从大到小遍历。时间复杂度$O(n)$，空间复杂度是$O(n)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+{{< tabgroup >}}
+{{< tab name="排序" >}}
+```go
+func hIndex(citations []int) (h int) {
+    sort.Ints(citations)
+    for i := len(citations) - 1; i >= 0 && citations[i] > h; i-- {
+        h++
+    }
+    return
+}
+```
+
+{{< /tab >}}
+{{< tab name="计数排序" >}}
+```go
+func hIndex(citations []int) int {
+    n := len(citations)
+    cnt := make([]int, n+1)
+    for _, c := range citations {
+        cnt[min(c, n)]++
+    }
+    s := 0
+    for i := n; ; i-- {
+        s += cnt[i]
+        if s >= i {
+            return i
+        }
+    }
+}
+```
+{{< /tab >}}
+{{< /tabgroup >}}
+
+---
+
+# O(1)时间插入、删除和获取随机元素
+> 难度：中等
+
+> 标签：数组、哈希表、数学、随机化
+
+> 链接：[O(1)时间插入、删除和获取随机元素](https://leetcode.cn/problems/insert-delete-getrandom-o1/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+实现`RandomizedSet`类：
+
+- `RandomizedSet()`初始化`RandomizedSet`对象
+- `bool insert(int val)`当元素 val 不存在时，向集合中插入该项，并返回 true ；否则，返回 false 。
+- `bool remove(int val)`当元素 val 存在时，从集合中移除该项，并返回 true ；否则，返回 false 。
+- `int getRandom()`随机返回现有集合中的一项（测试用例保证调用此方法时集合中至少存在一个元素）。每个元素应该有 相同的概率 被返回。
+你必须实现类的所有函数，并满足每个函数的**平均**时间复杂度为$O(1)$。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+**变长数组 + 哈希表**
+ 
+首先我们要明确：因为时间复杂度都要是$O(1)$，所以单一个数组肯定是不行的 (单数组只要遍历就要$O(n)$了)，所以必须引入一个哈希表来记录每个元素的下标。
+
+插入操作：判断 val 在不在数组里，存在返回false，不在则在数组末尾插入 val，然后把 val 及其对应下标存入哈希表，最后返回true。
+
+删除操作：判断 val 在不在数组里，不存在返回false，存在则在把这个元素移到数组末尾，然后缩短数组长度，从哈希表里删除 val，返回true。
+
+随机数操作：直接调用`rand.Intn()`。
+
+时间复杂度$O(1)$，空间复杂度是$O(n)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+type RandomizedSet struct {
+    nums []int
+    idx map[int]int
+}
+
+
+func Constructor() RandomizedSet {
+    return RandomizedSet{
+        nums: make([]int, 0),
+        idx: make(map[int]int),
+    }
+}
+
+
+func (this *RandomizedSet) Insert(val int) bool {
+    if _, ok := this.idx[val]; ok {
+        return false
+    }
+    this.idx[val] = len(this.nums)
+    this.nums = append(this.nums, val)
+    return true
+}
+
+
+func (this *RandomizedSet) Remove(val int) bool {
+    i, ok := this.idx[val] 
+    if !ok {
+        return false
+    }
+    n := len(this.nums)
+    last := this.nums[n-1]
+    this.nums[i] = last
+    this.idx[last] = i
+    this.nums = this.nums[:n-1]
+    delete(this.idx, val)
+    return true
+}
+
+
+func (this *RandomizedSet) GetRandom() int {
+    return this.nums[rand.Intn(len(this.nums))]
+}
+```
+
+---
+
+# 除了自身以外数组的乘积
+> 难度：中等
+
+> 标签：数组、前缀和
+
+> 链接：[除了自身以外数组的乘积](https://leetcode.cn/problems/insert-delete-getrandom-o1/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给你一个整数数组`nums`，返回数组`answer`，其中`answer[i]`等于`nums`中除了`nums[i]`之外其余各元素的乘积` 。
+
+题目数据**保证**数组`nums`之中任意元素的全部前缀元素和后缀的乘积都在**32 位**整数范围内。
+
+请**不要使用除法**，且在$O(n)$时间复杂度内完成此题。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+**前后缀**
+
+除了自身以外的乘积，就是`nums[:i]`的元素的乘积乘上`nums[i+1:]`的元素的乘积，即前后缀乘积。
+1. **优化前**。定义两个数组`pre`，`suf`。可知`pre[i] = pre[i-1] · nums[i-1]`，`suf[i] = suf[i+1] · nums[i+1]`，都算出来之后，最后`answer[i] = pre[i] · suf[i]`。时间复杂度$O(n)$，空间复杂度是$O(n)$。
+2. **优化后**。先把`suf`算出来，然后省掉`pre`，一边计算一边就乘到`suf`里，最后返回`suf`。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+{{< tabgroup >}}
+{{< tab name="优化前" >}}
+```go
+func productExceptSelf(nums []int) []int {
+    n := len(nums)
+    pre := make([]int, n)
+    pre[0] = 1
+    for i := 1; i < n; i++ {
+        pre[i] = pre[i-1] * nums[i-1]
+    }
+
+    suf := make([]int, n)
+    suf[n-1] = 1
+    for i := n - 2; i >= 0; i-- {
+        suf[i] = suf[i+1] * nums[i+1]
+    }
+
+    ans := make([]int, n)
+    for i, p := range pre {
+        ans[i] = p * suf[i]
+    }
+    return ans
+}
+```
+{{< /tab >}}
+{{< tab name="优化后" >}}
+```go
+func productExceptSelf(nums []int) []int {
+    n := len(nums)
+    suf := make([]int, n)
+    suf[n-1] = 1
+    for i := n - 2; i >= 0; i-- {
+        suf[i] = suf[i+1] * nums[i+1]
+    }
+
+    pre := 1
+    for i, x := range nums {
+        suf[i] *= pre
+        pre *= x
+    }
+
+    return suf
+}
+```
+{{< /tab >}}
+{{< /tabgroup >}}
+
+---
+
+# 加油站
+> 难度：中等
+
+> 标签：数组、贪心
+
+> 链接：[加油站](https://leetcode.cn/problems/gas-station/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+在一条环路上有 n 个加油站，其中第 i 个加油站有汽油`gas[i]`升。
+
+你有一辆油箱容量无限的的汽车，从第 i 个加油站开往第 i+1 个加油站需要消耗汽油`cost[i]`升。你从其中的一个加油站出发，开始时油箱为空。
+
+给定两个整数数组`gas`和`cost`，如果你可以按顺序绕环路行驶一周，则返回出发时加油站的编号，否则返回 -1 。如果存在解，则**保证**它是**唯一**的。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+**前后缀**
+
+除了自身以外的乘积，就是`nums[:i]`的元素的乘积乘上`nums[i+1:]`的元素的乘积，即前后缀乘积。
+1. **优化前**。定义两个数组`pre`，`suf`。可知`pre[i] = pre[i-1] · nums[i-1]`，`suf[i] = suf[i+1] · nums[i+1]`，都算出来之后，最后`answer[i] = pre[i] · suf[i]`。时间复杂度$O(n)$，空间复杂度是$O(n)$。
+2. **优化后**。先把`suf`算出来，然后省掉`pre`，一边计算一边就乘到`suf`里，最后返回`suf`。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+{{< tabgroup >}}
+{{< tab name="优化前" >}}
+```go
+func productExceptSelf(nums []int) []int {
+    n := len(nums)
+    pre := make([]int, n)
+    pre[0] = 1
+    for i := 1; i < n; i++ {
+        pre[i] = pre[i-1] * nums[i-1]
+    }
+
+    suf := make([]int, n)
+    suf[n-1] = 1
+    for i := n - 2; i >= 0; i-- {
+        suf[i] = suf[i+1] * nums[i+1]
+    }
+
+    ans := make([]int, n)
+    for i, p := range pre {
+        ans[i] = p * suf[i]
+    }
+    return ans
+}
+```
+{{< /tab >}}
+{{< tab name="优化后" >}}
+```go
+func productExceptSelf(nums []int) []int {
+    n := len(nums)
+    suf := make([]int, n)
+    suf[n-1] = 1
+    for i := n - 2; i >= 0; i-- {
+        suf[i] = suf[i+1] * nums[i+1]
+    }
+
+    pre := 1
+    for i, x := range nums {
+        suf[i] *= pre
+        pre *= x
+    }
+
+    return suf
 }
 ```
 {{< /tab >}}
