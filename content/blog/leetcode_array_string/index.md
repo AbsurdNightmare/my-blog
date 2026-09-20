@@ -734,58 +734,230 @@ func productExceptSelf(nums []int) []int {
 
 {{< /tab >}}
 {{< tab name="解法" >}}
-**前后缀**
+**贪心**
 
-除了自身以外的乘积，就是`nums[:i]`的元素的乘积乘上`nums[i+1:]`的元素的乘积，即前后缀乘积。
-1. **优化前**。定义两个数组`pre`，`suf`。可知`pre[i] = pre[i-1] · nums[i-1]`，`suf[i] = suf[i+1] · nums[i+1]`，都算出来之后，最后`answer[i] = pre[i] · suf[i]`。时间复杂度$O(n)$，空间复杂度是$O(n)$。
-2. **优化后**。先把`suf`算出来，然后省掉`pre`，一边计算一边就乘到`suf`里，最后返回`suf`。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+这道题我们可以借助图1来更直观的展示：
+
+![pic1](./gas.png "图1")
+
+因为是环路，我们要找的是从一个站点出发按顺序遍历，看是否满足。首先，如果总的耗油量大于加油量，那肯定是不能完成的。如果没有，那么必然有一种情况可以满足。像图片里的那样，在第三个加油站，这个时候油量是最低值，没有可能更低了。说明我们从第三个加油站出发的话，全程走下来油量是可以满足的。
+
+换句话说，我们要找的就是油量最低谷的时候，从这个加油站出发油不会变成负的，可以满足条件要求。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+func canCompleteCircuit(gas []int, cost []int) int {
+    var ans, minS, s int
+    for i, g := range gas {
+        s += g - cost[i]
+        if s < minS {
+            minS = s
+            ans = i + 1
+        }
+    }
+    if s < 0 {
+        return -1
+    }
+    return ans
+}
+```
+
+---
+
+# 分发糖果
+> 难度：困难
+
+> 标签：数组、贪心
+
+> 链接：[分发糖果](https://leetcode.cn/problems/candy/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+n 个孩子站成一排。
+
+给你一个整数数组`ratings`表示每个孩子的评分。
+
+你需要按照以下要求，给这些孩子分发糖果：
+
+- 每个孩子**至少**分配到 1 个糖果。
+- 相邻两个孩子中，评分**更高**的那个会获得更多的糖果。
+- 请你给每个孩子分发糖果，计算并返回需要准备的**最少**糖果数目。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+这道题有两种贪心的思路：
+1. **两次遍历**。从左往右和从右往左两次遍历。遍历的时候我只考虑这个方向后一个是否比前一个大，多的多拿一块。两次遍历后每一位取更大的那个值，最后加起来。时间复杂度$O(n)$，空间复杂度是$O(n)$。
+2. **一次遍历**。其实我们每次讨论的都是一个类似“山”的结构。上升段第一个给 1 块糖果，递增到峰顶；下降段最后一个给 1 块。按照这个规律，我们只要算出所有的山的和，再把全部加起来就可以了。我们用`inc`表示递增长度，`dec`表示递减长度，可以得到公式：$\frac{inc(inc-1)+dec(dec-1)}{2} + max(inc,dec)$时间复杂度$O(n)$，空间复杂度是$O(1)$。
 {{< /tab >}}
 {{< /tabgroup >}}
 
 下面给出解法。
 
 {{< tabgroup >}}
-{{< tab name="优化前" >}}
+{{< tab name="两次遍历" >}}
 ```go
-func productExceptSelf(nums []int) []int {
-    n := len(nums)
-    pre := make([]int, n)
-    pre[0] = 1
-    for i := 1; i < n; i++ {
-        pre[i] = pre[i-1] * nums[i-1]
+func candy(ratings []int) int {
+	n := len(ratings)
+	candies := make([]int, n)
+	for i := 1; i < n; i++ {
+		if ratings[i] > ratings[i-1] {
+			candies[i] = candies[i-1] + 1
+		}
+	}
+
+	for i := n - 2; i >= 0; i-- {
+		if ratings[i] > ratings[i+1] {
+			candies[i] = max(candies[i], candies[i+1]+1)
+		}
+	}
+
+    ans := n
+    for _, v := range candies {
+        ans += v
     }
 
-    suf := make([]int, n)
-    suf[n-1] = 1
-    for i := n - 2; i >= 0; i-- {
-        suf[i] = suf[i+1] * nums[i+1]
-    }
+	return ans
+}
+```
+{{< /tab >}}
+{{< tab name="一次遍历" >}}
+```go
+func candy(ratings []int) int {
+    n := len(ratings)
+    ans := n
+    for i := 0; i < n; i++ {
+        start := i
+        if i > 0 && ratings[i-1] < ratings[i] {
+            start--
+        }
 
-    ans := make([]int, n)
-    for i, p := range pre {
-        ans[i] = p * suf[i]
+        for i+1 < n && ratings[i] < ratings[i+1] {
+            i++
+        }
+        top := i
+
+        for i+1 < n && ratings[i] > ratings[i+1] {
+            i++
+        }
+
+        inc := top - start 
+        dec := i - top
+        ans += (inc*(inc-1)+dec*(dec-1))/2 + max(inc, dec)
     }
     return ans
 }
 ```
 {{< /tab >}}
-{{< tab name="优化后" >}}
+{{< /tabgroup >}}
+
+---
+
+# 接雨水
+> 难度：困难
+
+> 标签：数组、栈、双指针、动态规划、单调栈
+
+> 链接：[接雨水](https://leetcode.cn/problems/trapping-rain-water/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+这道题有三种解法：
+1. **动态规划**。从左往右和从右往左两次遍历。遍历的时候我只考虑这个方向后一个是否比前一个大，多的多拿一块。两次遍历后每一位取更大的那个值，最后加起来。时间复杂度$O(n)$，空间复杂度是$O(n)$。
+2. **双指针**。其实我们每次讨论的都是一个类似“山”的结构。上升段第一个给 1 块糖果，递增到峰顶；下降段最后一个给 1 块。按照这个规律，我们只要算出所有的山的和，再把全部加起来就可以了。我们用`inc`表示递增长度，`dec`表示递减长度，可以得到公式：$\frac{inc(inc-1)+dec(dec-1)}{2} + max(inc,dec)$时间复杂度$O(n)$，空间复杂度是$O(1)$。
+3. **单调栈**。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+{{< tabgroup >}}
+{{< tab name="动态规划" >}}
 ```go
-func productExceptSelf(nums []int) []int {
-    n := len(nums)
-    suf := make([]int, n)
-    suf[n-1] = 1
-    for i := n - 2; i >= 0; i-- {
-        suf[i] = suf[i+1] * nums[i+1]
+func candy(ratings []int) int {
+	n := len(ratings)
+	candies := make([]int, n)
+	for i := 1; i < n; i++ {
+		if ratings[i] > ratings[i-1] {
+			candies[i] = candies[i-1] + 1
+		}
+	}
+
+	for i := n - 2; i >= 0; i-- {
+		if ratings[i] > ratings[i+1] {
+			candies[i] = max(candies[i], candies[i+1]+1)
+		}
+	}
+
+    ans := n
+    for _, v := range candies {
+        ans += v
     }
 
-    pre := 1
-    for i, x := range nums {
-        suf[i] *= pre
-        pre *= x
-    }
+	return ans
+}
+```
+{{< /tab >}}
+{{< tab name="双指针" >}}
+```go
+func candy(ratings []int) int {
+    n := len(ratings)
+    ans := n
+    for i := 0; i < n; i++ {
+        start := i
+        if i > 0 && ratings[i-1] < ratings[i] {
+            start--
+        }
 
-    return suf
+        for i+1 < n && ratings[i] < ratings[i+1] {
+            i++
+        }
+        top := i
+
+        for i+1 < n && ratings[i] > ratings[i+1] {
+            i++
+        }
+
+        inc := top - start 
+        dec := i - top
+        ans += (inc*(inc-1)+dec*(dec-1))/2 + max(inc, dec)
+    }
+    return ans
+}
+```
+
+{{< /tab >}}
+{{< tab name="单调栈" >}}
+```go
+func candy(ratings []int) int {
+    n := len(ratings)
+    ans := n
+    for i := 0; i < n; i++ {
+        start := i
+        if i > 0 && ratings[i-1] < ratings[i] {
+            start--
+        }
+
+        for i+1 < n && ratings[i] < ratings[i+1] {
+            i++
+        }
+        top := i
+
+        for i+1 < n && ratings[i] > ratings[i+1] {
+            i++
+        }
+
+        inc := top - start 
+        dec := i - top
+        ans += (inc*(inc-1)+dec*(dec-1))/2 + max(inc, dec)
+    }
+    return ans
 }
 ```
 {{< /tab >}}
