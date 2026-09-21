@@ -790,7 +790,7 @@ n 个孩子站成一排。
 {{< tab name="解法" >}}
 这道题有两种贪心的思路：
 1. **两次遍历**。从左往右和从右往左两次遍历。遍历的时候我只考虑这个方向后一个是否比前一个大，多的多拿一块。两次遍历后每一位取更大的那个值，最后加起来。时间复杂度$O(n)$，空间复杂度是$O(n)$。
-2. **一次遍历**。其实我们每次讨论的都是一个类似“山”的结构。上升段第一个给 1 块糖果，递增到峰顶；下降段最后一个给 1 块。按照这个规律，我们只要算出所有的山的和，再把全部加起来就可以了。我们用`inc`表示递增长度，`dec`表示递减长度，可以得到公式：$\frac{inc(inc-1)+dec(dec-1)}{2} + max(inc,dec)$时间复杂度$O(n)$，空间复杂度是$O(1)$。
+2. **一次遍历**。其实我们每次讨论的都是一个类似“山”的结构。上升段第一个给 1 块糖果，递增到峰顶；下降段最后一个给 1 块。按照这个规律，我们只要算出所有的山的和，再把全部加起来就可以了。我们用`inc`表示递增长度，`dec`表示递减长度，可以得到公式：$\frac{inc(inc-1)+dec(dec-1)}{2} + max(inc,dec)$。时间复杂度$O(n)$，空间复杂度是$O(1)$。
 {{< /tab >}}
 {{< /tabgroup >}}
 
@@ -869,9 +869,14 @@ func candy(ratings []int) int {
 {{< /tab >}}
 {{< tab name="解法" >}}
 这道题有三种解法：
-1. **动态规划**。从左往右和从右往左两次遍历。遍历的时候我只考虑这个方向后一个是否比前一个大，多的多拿一块。两次遍历后每一位取更大的那个值，最后加起来。时间复杂度$O(n)$，空间复杂度是$O(n)$。
-2. **双指针**。其实我们每次讨论的都是一个类似“山”的结构。上升段第一个给 1 块糖果，递增到峰顶；下降段最后一个给 1 块。按照这个规律，我们只要算出所有的山的和，再把全部加起来就可以了。我们用`inc`表示递增长度，`dec`表示递减长度，可以得到公式：$\frac{inc(inc-1)+dec(dec-1)}{2} + max(inc,dec)$时间复杂度$O(n)$，空间复杂度是$O(1)$。
-3. **单调栈**。
+1. **动态规划**。最朴素的思想就是每个下标 i 处可以接的雨水量是它两边最大高度的最小值。所以，我们可以定义两个数组`leftMax`，`rightMax`，然后从左往右，从右往左两次遍历记录最大高度，然后再算出每个位置的雨水量。时间复杂度$O(n)$，空间复杂度是$O(n)$。
+2. **双指针**。定义两个指针`left`和`right`，以及两个值`leftMax`，`rightMax`记录左右的最大高度。当两个指针没有相遇时，进行如下操作：
+- 使用`height[left]`和`height[right]`的值更新`leftMax`和`rightMax`的值；
+- 如果`height[left] < height[right]`，则必有`leftMax < rightMax`，下标`left`处能接的雨水量等于`leftMax − height[left]`，将下标`left`处能接的雨水量加到能接的雨水总量，然后将`left`加 1（即向右移动一位）；
+- 如果`height[left] ≥ height[right]`，则必有`leftMax ≥ rightMax`，下标`right`处能接的雨水量等于`rightMax − height[right]`，将下标`right`处能接的雨水量加到能接的雨水总量，然后将`right`减 1（即向左移动一位）。
+- 时间复杂度$O(n)$，空间复杂度是$O(1)$。
+
+3. **单调栈**。单调栈记录数组下标，且保证从栈底到栈顶对应的高度单调递减。从左往右遍历数组，如果当前高度小于等于栈顶，则存入当前下标；如果大于栈顶，因为单调栈的属性，所以必然形成一个凹槽可以接雨水。那就计算这个凹槽的宽度和高度，得出雨水量。时间复杂度$O(n)$，空间复杂度是$O(n)$。
 {{< /tab >}}
 {{< /tabgroup >}}
 
@@ -880,87 +885,590 @@ func candy(ratings []int) int {
 {{< tabgroup >}}
 {{< tab name="动态规划" >}}
 ```go
-func candy(ratings []int) int {
-	n := len(ratings)
-	candies := make([]int, n)
-	for i := 1; i < n; i++ {
-		if ratings[i] > ratings[i-1] {
-			candies[i] = candies[i-1] + 1
-		}
-	}
-
-	for i := n - 2; i >= 0; i-- {
-		if ratings[i] > ratings[i+1] {
-			candies[i] = max(candies[i], candies[i+1]+1)
-		}
-	}
-
-    ans := n
-    for _, v := range candies {
-        ans += v
+func trap(height []int) int {
+    n := len(height)
+    if n == 0 {
+        return 0
     }
 
-	return ans
+    leftMax := make([]int, n)
+    left := 0
+    for i, h := range height {
+        leftMax[i] = max(left, h)
+        if h > left {
+            left = h
+        }
+    }
+
+    rightMax := make([]int, n)
+    right := 0
+    for i := n-1; i >= 0; i-- {
+        rightMax[i] = max(right, height[i])
+        if height[i] > right {
+            right = height[i]
+        }
+    }
+
+    ans := 0
+    for i, h := range height {
+        ans += min(leftMax[i], rightMax[i]) - h
+    }
+
+    return ans
 }
 ```
 {{< /tab >}}
 {{< tab name="双指针" >}}
 ```go
-func candy(ratings []int) int {
-    n := len(ratings)
-    ans := n
-    for i := 0; i < n; i++ {
-        start := i
-        if i > 0 && ratings[i-1] < ratings[i] {
-            start--
+func trap(height []int) (ans int) {
+    left, right := 0, len(height)-1
+    leftMax, rightMax := 0, 0
+    for left < right {
+        leftMax = max(leftMax, height[left])
+        rightMax = max(rightMax, height[right])
+        if height[left] < height[right] {
+            ans += leftMax - height[left]
+            left++
+        } else {
+            ans += rightMax - height[right]
+            right--
         }
-
-        for i+1 < n && ratings[i] < ratings[i+1] {
-            i++
-        }
-        top := i
-
-        for i+1 < n && ratings[i] > ratings[i+1] {
-            i++
-        }
-
-        inc := top - start 
-        dec := i - top
-        ans += (inc*(inc-1)+dec*(dec-1))/2 + max(inc, dec)
     }
-    return ans
+    return
 }
 ```
 
 {{< /tab >}}
 {{< tab name="单调栈" >}}
 ```go
-func candy(ratings []int) int {
-    n := len(ratings)
-    ans := n
-    for i := 0; i < n; i++ {
-        start := i
-        if i > 0 && ratings[i-1] < ratings[i] {
-            start--
-        }
+func trap(height []int) (ans int) {
+    stk := []int{}
 
-        for i+1 < n && ratings[i] < ratings[i+1] {
-            i++
+    for i, h := range height {
+        for len(stk) > 0 && h > height[stk[len(stk)-1]] {
+            top := stk[len(stk)-1]
+            stk = stk[:len(stk)-1]
+            if len(stk) == 0 {
+                break
+            }
+            left := stk[len(stk)-1]
+            curWidth := i - left - 1
+            curHeight := min(height[left], h) - height[top]
+            ans += curWidth * curHeight
         }
-        top := i
-
-        for i+1 < n && ratings[i] > ratings[i+1] {
-            i++
-        }
-
-        inc := top - start 
-        dec := i - top
-        ans += (inc*(inc-1)+dec*(dec-1))/2 + max(inc, dec)
+        stk = append(stk, i)
     }
-    return ans
+    return
 }
 ```
 {{< /tab >}}
 {{< /tabgroup >}}
+
+---
+
+# 罗马数字转整数
+> 难度：简单
+
+> 标签：数学、字符串、哈希表
+
+> 链接：[罗马数字转整数](https://leetcode.cn/problems/roman-to-integer/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+罗马数字包含以下七种字符: I， V， X， L，C，D 和 M。
+
+| 字符 | 数值 |
+| --- | --- |
+| I | 1 |
+| V | 5 |
+| X | 10 |
+| L | 50 |
+| C | 100 |
+| D | 500 | 
+| M | 1000 |
+
+例如， 罗马数字 2 写做 II ，即为两个并列的 1 。12 写做 XII ，即为 X + II 。 27 写做  XXVII, 即为 XX + V + II 。
+
+通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，例如 4 不写做 IIII，而是 IV。数字 1 在数字 5 的左边，所表示的数等于大数 5 减小数 1 得到的数值 4 。同样地，数字 9 表示为 IX。这个特殊的规则只适用于以下六种情况：
+
+- I 可以放在 V (5) 和 X (10) 的左边，来表示 4 和 9。
+- X 可以放在 L (50) 和 C (100) 的左边，来表示 40 和 90。 
+- C 可以放在 D (500) 和 M (1000) 的左边，来表示 400 和 900。
+给定一个罗马数字，将其转换成整数。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+建立一个字母的对应哈希表，两个两个看，如果前一个小于后一个那么前一个就要减掉。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+var ROMAN = map[byte]int {
+    'I': 1,
+    'V': 5,
+    'X': 10,
+    'L': 50,
+    'C': 100,
+    'D': 500,
+    'M': 1000,
+}
+
+func romanToInt(s string) int {
+    n := len(s)
+    ans := 0
+    for i := range n-1 {
+        x, y := ROMAN[s[i]], ROMAN[s[i+1]]
+        if x < y {
+            ans -= x
+        } else {
+            ans += x
+        }
+    }
+    return ans + ROMAN[s[n-1]]
+}
+```
+
+---
+
+# 整数转罗马数字
+> 难度：中等
+
+> 标签：数学、字符串、哈希表
+
+> 链接：[整数转罗马数字](https://leetcode.cn/problems/integer-to-roman/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+七个不同的符号代表罗马数字，其值如下：
+
+| 符号 | 值 |
+| --- | --- |
+| I	| 1 |
+| V	| 5 |
+| X	| 10 |
+| L	| 50 |
+| C	| 100 |
+| D	| 500 | 
+| M	| 1000 |
+
+罗马数字是通过添加从最高到最低的小数位值的转换而形成的。将小数位值转换为罗马数字有以下规则：
+
+- 如果该值不是以 4 或 9 开头，请选择可以从输入中减去的最大值的符号，将该符号附加到结果，减去其值，然后将其余部分转换为罗马数字。
+- 如果该值以 4 或 9 开头，使用**减法形式**，表示从以下符号中减去一个符号，例如 4 是 5 (V) 减 1 (I): IV ，9 是 10 (X) 减 1 (I)：IX。仅使用以下减法形式：4 (IV)，9 (IX)，40 (XL)，90 (XC)，400 (CD) 和 900 (CM)。
+- 只有 10 的次方（I, X, C, M）最多可以连续附加 3 次以代表 10 的倍数。你不能多次附加 5 (V)，50 (L) 或 500 (D)。如果需要将符号附加4次，请使用**减法形式**。
+给定一个整数，将其转换为罗马数字。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+打表秒杀（可以打表是因为输入值范围小，情况少）。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+var R = [4][10]string{
+    {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"}, // 个位
+    {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"}, // 十位
+    {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"}, // 百位
+    {"", "M", "MM", "MMM"}, // 千位
+}
+
+func intToRoman(num int) string {
+    return R[3][num/1000] + R[2][num/100%10] + R[1][num/10%10] + R[0][num%10]
+}
+```
+
+---
+
+# 最后一个单词的长度
+> 难度：简单
+
+> 标签：字符串
+
+> 链接：[最后一个单词的长度](https://leetcode.cn/problems/length-of-last-word/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给你一个字符串 s，由若干单词组成，单词前后用一些空格字符隔开。返回字符串中**最后一个**单词的长度。
+
+**单词**是指仅由字母组成、不包含任何空格字符的最大子字符串。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+1. **手写循环**。跳过末尾的空格，找到最后一个单词，算出长度。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+2. **库函数**。时间复杂度$O(n)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+{{< tabgroup >}}
+{{< tab name="手写循环" >}}
+```go
+func lengthOfLastWord(s string) int {
+    ans := 0
+    i := len(s)-1
+    for s[i] == ' ' {
+        i--
+    }
+
+    for i >= 0 && s[i] != ' '{
+        ans++
+        i--
+    }
+
+    return ans
+}
+```
+
+{{< /tab >}}
+{{< tab name="库函数" >}}
+```go
+func lengthOfLastWord(s string) int {
+    s = strings.TrimRight(s, " ")
+    return len(s) - 1 - strings.LastIndexByte(s, ' ')
+}
+```
+{{< /tab >}}
+{{< /tabgroup >}}
+
+---
+
+# 最长公共前缀
+> 难度：简单
+
+> 标签：字符串、字典树、数组
+
+> 链接：[最长公共前缀](https://leetcode.cn/problems/longest-common-prefix/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 ""。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+从左到右遍历 strs 的每一列。设当前遍历到第 j 列，从上到下遍历这一列的字母。设当前遍历到第 i 行，即`strs[i][j]`。如果 j 等于`strs[i]`的长度，或者`strs[i][j] != strs[0][j]`，说明这一列的字母缺失或者不全一样，那么最长公共前缀的长度等于 j，返回`strs[0]`的长为 j 的前缀。如果没有中途返回，说明所有字符串都有一个等于`strs[0]`的前缀，那么最长公共前缀就是`strs[0]`。时间复杂度$O(nm)$，空间复杂度是$O(1)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+func longestCommonPrefix(strs []string) string {
+    s0 := strs[0]
+    for i, c := range s0 {
+        for _, str := range strs {
+            if i == len(str) || str[i] != byte(c) {
+                return s0[:i]
+            }
+        }
+    }
+    return s0
+}
+```
+
+---
+
+# 反转字符串中的单词
+> 难度：中等
+
+> 标签：字符串、双指针
+
+> 链接：[反转字符串中的单词](https://leetcode.cn/problems/reverse-words-in-a-string/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给你一个字符串 s ，请你反转字符串中**单词**的顺序。
+
+**单词**是由非空格字符组成的字符串。s 中使用至少一个空格将字符串中的**单词**分隔开。
+
+返回**单词**顺序颠倒且**单词**之间用单个空格连接的结果字符串。
+
+注意：输入字符串 s中可能会存在前导空格、尾随空格或者单词间的多个空格。返回的结果字符串中，单词间应当仅用单个空格分隔，且不包含任何额外的空格。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+1. **双指针**。倒序遍历，用左右指针记录一个单词的左右边界，添加到一个单词列表里，最后拼接。时间复杂度$O(n)$，空间复杂度是$O(n)$。
+2. **分割 + 倒序**。用库函数。时间复杂度$O(n)$，空间复杂度是$O(n)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+{{< tabgroup >}}
+{{< tab name="双指针" >}}
+```go
+func reverseWords(s string) string {
+    str := strings.TrimSpace(s)
+    i := len(str) - 1
+    j := i
+    ans := []string{}
+    for i >= 0 {
+        for i >= 0 && str[i] != ' ' {
+            i--
+        }
+        ans = append(ans, str[i+1:j+1])
+        for i >= 0 && str[i] == ' ' {
+            i--
+        }
+        j = i
+    }
+    return strings.Join(ans, " ")
+}
+```
+
+{{< /tab >}}
+{{< tab name="分割 + 倒序" >}}
+```go
+func reverseWords(s string) string {
+    str := strings.Fields(s)
+    slices.Reverse(str)
+    return strings.Join(str, " ")
+}
+```
+{{< /tab >}}
+{{< /tabgroup >}}
+
+---
+
+# Z字形变换
+> 难度：中等
+
+> 标签：字符串
+
+> 链接：[Z字形变换](https://leetcode.cn/problems/zigzag-conversion/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+将一个给定字符串 s 根据给定的行数`numRows`，以从上往下、从左到右进行 Z 字形排列。
+
+比如输入字符串为`"PAYPALISHIRING"`行数为 3 时，排列如下：
+
+P   A   H   N
+A P L S I I G
+Y   I   R
+之后，你的输出需要从左往右逐行读取，产生出一个新的字符串，比如：`"PAHNAPLSIIGYIR"`。
+
+请你实现这个将字符串进行指定行数变换的函数：
+
+`string convert(string s, int numRows);`
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+定义一个`ans`数组，大小等于行数。我们对题干里的例子可以这么看：
+
+| 字母 | P | A | Y | P | A | L | I | S | H | I | R | I | N | G |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 对应 ans[i] | 0 | 1 | 2 | 1 | 0 | 1 | 2 | 1 | 0 | 1 | 2 | 1 | 0 | 1 |
+
+提取出来就是：
+
+| ans | 内容 |
+| --- | --- |
+| i=0 | PAHN |
+| i=1 | APLSIIG |
+| i=2 | YIR |
+
+最后把三个拼接起来输出。时间复杂度$O(n)$，空间复杂度是$O(n)$。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+func convert(s string, numRows int) string {
+    if numRows < 2 {
+        return s
+    }
+
+    i, flag := 0, -1
+    ans := make([]string, numRows) 
+    for _, c := range s {
+        ans[i] += string(c)
+        if i == 0 || i == numRows-1 {
+            flag = -flag
+        }
+        i += flag
+    }
+
+    return strings.Join(ans, "")
+}
+```
+
+---
+
+# 找出字符串中第一个匹配项的下标
+> 难度：简单
+
+> 标签：字符串、双指针、字符串匹配、KMP算法、Boyer-Moore算法、扩展KMP
+
+> 链接：[找出字符串中第一个匹配项的下标](https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给你两个字符串`haystack`和`needle`，请你在`haystack`字符串中找出`needle`字符串的第一个匹配项的下标（下标从 0 开始）。如果`needle`不是`haystack`的一部分，则返回  -1 。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+1. **暴力匹配**。从每个字符位置出发，匹配等长的字符串是不是等于`needle`，是的话就返回下标。时间复杂度$O(nm)$，空间复杂度是$O(1)$。
+2. **KMP算法**。这个比较复杂，直接给B站视频，忘了就去复习 [KMP算法](https://www.bilibili.com/video/BV1AY4y157yL/?spm_id_from=333.337.search-card.all.click&vd_source=915e56051d353928556550abfb9bac92)
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+{{< tabgroup >}}
+{{< tab name="暴力匹配" >}}
+```go
+func strStr(haystack string, needle string) int {
+    n := len(needle)
+    for i, _ := range haystack {
+        if i+n > len(haystack) {
+            break
+        }
+        if haystack[i:i+n] == needle {
+            return i
+        }
+    }
+    return -1
+}
+```
+{{< /tab >}}
+{{< tab name="KMP算法" >}}
+```go
+func getNext(needle string) []int {
+    n := len(needle)
+    ans := make([]int, n)
+
+    for i, j := 0, 1; j < n; j++ {
+        for i > 0 && needle[i] != needle[j] {
+            i = ans[i-1]
+        }
+        if needle[i] == needle[j] {
+            i++
+        }
+        ans[j] = i
+    }
+
+    return ans
+}
+
+func strStr(haystack, needle string) int {
+    n, m := len(haystack), len(needle)
+    next := getNext(needle)
+
+    for i, j := 0, 0; i < n; i++ {
+        for j > 0 && haystack[i] != needle[j] {
+            j = next[j - 1]
+        }
+        if haystack[i] == needle[j] {
+            j++
+        }
+        if j == m {
+            return i - m + 1
+        }
+    }
+    return -1
+}
+```
+{{< /tab >}}
+{{< /tabgroup >}}
+
+---
+
+# 文本左右对齐
+> 难度：困难
+
+> 标签：数组、字符串、模拟
+
+> 链接：[文本左右对齐](https://leetcode.cn/problems/text-justification/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给定一个单词数组`words`和一个长度`maxWidth`，重新排版单词，使其成为每行恰好有`maxWidth`个字符，且左右两端对齐的文本。
+
+你应该使用 “贪心算法” 来放置给定的单词；也就是说，尽可能多地往每行中放置单词。必要时可用空格 ' ' 填充，使得每行恰好有`maxWidth`个字符。
+
+要求尽可能均匀分配单词间的空格数量。如果某一行单词间的空格不能均匀分配，则左侧放置的空格数要多于右侧的空格数。
+
+文本的最后一行应为左对齐，且单词之间不插入额外的空格。
+
+注意:
+
+- 单词是指由非空格字符组成的字符序列。
+- 每个单词的长度大于 0，小于等于`maxWidth`。
+- 输入单词数组`words`至少包含一个单词。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+**分组循环**
+
+这里引用一下灵神的思路：
+
+**内层循环开始前**
+记录当前位置`start=i`，这也是这一行第一个单词的下标。
+
+初始化这一行的最小长度`sumLen`为`words[i]`的长度。
+
+**内层循环**
+从这一行的第二个单词 i+1 开始循环。
+
+从第二个单词开始，每个单词之前必须有一个空格。
+
+所以每个单词占用的长度是单词长度加一，加给`sumLen`。
+
+如果`sumLen + len(words[i]) + 1 > maxWidth`，退出循环。
+
+**内层循环结束后**
+这一行还剩下`extraSpaces = maxWidth − sumLen`个空格没有分配。
+
+这一行单词之间的空隙个数`gaps = i − start − 1`，即单词个数减一。
+
+首先处理特殊情况。如果只有一个单词，或者现在是最后一行，那么根据题目要求，所有单词左对齐，单词之间只有一个空格，末尾补上`extraSpaces`个空格。
+
+然后处理一般情况。
+
+单词之间至少有$\left \lfloor \frac{extraSpaces}{gaps}  \right \rfloor + 1$ 个空格。其中 +1 是因为单词之间必须有一个空格，不算在`extraSpaces`中，这里重新加进来。
+
+还剩下`rem = extraSpacesmodgaps`个空格，分配给前`rem`个空隙。换句话说，前`rem + 1`个单词之间的空格个数多 1。
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出解法。
+
+```go
+func fullJustify(words []string, maxWidth int) (ans []string) {
+    n := len(words)
+    for i := 0;i < n; {
+        start := i
+        sumLen := len(words[i])
+        for i++; i < n && sumLen+len(words[i])+1 <= maxWidth; i++ {
+            sumLen += len(words[i]) + 1
+        }
+
+        extraSpaces := maxWidth - sumLen
+        gaps := i - start - 1
+
+        if gaps == 0 || i == n {
+            row := strings.Join(words[start:i], " ") +
+                strings.Repeat(" ", extraSpaces)
+            ans = append(ans, row)
+            continue
+        }
+
+        avg, rem := extraSpaces/gaps, extraSpaces%gaps
+        spaces := strings.Repeat(" ", avg+1)
+        row := strings.Join(words[start:start+rem+1], spaces+" ") +
+            spaces + strings.Join(words[start+rem+1:i], spaces)
+        ans = append(ans, row)
+    }
+    return
+}
+```
 
 ---
