@@ -11,6 +11,8 @@ math = true
 
 > 说在前：由于是滑动窗口板块，所以采用的方法基本都是滑动窗口。其他的方法基本跳过或者不考虑。
 
+---
+
 # 长度最小的子数组
 > 难度：中等
 
@@ -199,9 +201,7 @@ func findSubstring(s string, words []string) (ans []int) {
 
 依旧困难题。
 
-// TODO
-
-时间复杂度$O(n)$，空间复杂度$O(1)$。
+首先引入一个哈希表`hash`记录 t 中每个字符个数，`kinds`记录一共有几个不同的字符。然后用`left`，`right`控制滑窗，在引入`cnt`记录当前窗口里满足 t 中几个种类。如果`cnt == kinds`，说明窗口里包含 t 中的所有字符，包括重复的。这个时候循环缩短窗口，然后记录每次的左右边界。最后返回 s 串中对应下标的子串。时间复杂度$O(m+n)$，空间复杂度$O(\sum)$。
 
 {{< /tab >}}
 {{< /tabgroup >}}
@@ -209,5 +209,45 @@ func findSubstring(s string, words []string) (ans []int) {
 下面给出详细代码:
 
 ```go
-// TODO
+func minWindow(s string, t string) string {
+    hash := [128]int{}
+    kinds := 0
+    for _, c := range t {
+        if hash[c] == 0 {
+            kinds++
+        }
+        hash[c]--
+    }
+
+    ansLeft, ansRight := -1, len(s)
+    cnt := 0
+    left := 0
+    for right, c := range s {
+        hash[c]++
+
+        if hash[c] == 0 {
+            cnt++
+        }
+
+        for cnt == kinds {
+            if right-left < ansRight-ansLeft {
+                ansLeft = left
+                ansRight = right
+            }
+
+            out := s[left]
+            if hash[out] == 0 {
+                cnt--
+            }
+            hash[out]--
+            left++
+        }
+    }
+
+    if ansLeft < 0 {
+        return ""
+    }
+
+    return s[ansLeft:ansRight+1]
+}
 ```

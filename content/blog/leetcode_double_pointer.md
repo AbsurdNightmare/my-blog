@@ -11,6 +11,8 @@ math = true
 
 > 说在前：由于是双指针板块，所以采用的方法基本都是双指针。其他的方法基本跳过或者不考虑。
 
+---
+
 # 验证回文串
 > 难度：简单
 
@@ -74,25 +76,6 @@ func isPalindrome(s string) bool {
 }
 ```
 
-{{< /tab >}}
-{{< /tabgroup >}}
-
-```go
-func merge(nums1 []int, m int, nums2 []int, n int) {
-	tail := m + n - 1
-	p1, p2 := m-1, n-1
-	for p2 >= 0 {
-		if p1 >= 0 && nums1[p1] >= nums2[p2] {
-			nums1[tail] = nums1[p1]
-			p1--
-		} else {
-			nums1[tail] = nums2[p2]
-			p2--
-		}
-        tail--
-	}
-}
-```
 ---
 
 # 判断子序列
