@@ -166,3 +166,140 @@ func rotate(matrix [][]int) {
 ```
 
 ---
+
+# 矩阵置零
+> 难度：中等 
+
+> 标签：数组、哈希表、矩阵
+
+> 链接：[矩阵置零](https://leetcode.cn/problems/set-matrix-zeroes/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给定一个 m x n 的矩阵，如果一个元素为 0 ，则将其所在行和列的所有元素都设为 0 。请使用**原地**算法。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+把是否把这一行，这一列置零的消息存入第一列，第一行的标志里，然后在最后进行操作。详细的讲解看[矩阵置零-灵神题解](https://leetcode.cn/problems/set-matrix-zeroes/solutions/3799648/yi-bu-bu-you-hua-cong-omn-dao-o1-kong-ji-fdgt)
+
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出详细代码：
+
+```go
+func setZeroes(matrix [][]int)  {
+    m, n := len(matrix), len(matrix[0])
+
+    firstRowHasZero := slices.Contains(matrix[0], 0)
+
+    firstColHasZero := false
+    for _, row := range matrix {
+        if row[0] == 0 {
+            firstColHasZero = true
+            break
+        }
+    }
+
+    for i := 1; i < m; i++ {
+        for j := 1; j < n; j++ {
+            if matrix[i][j] == 0 {
+                matrix[i][0] = 0
+                matrix[0][j] = 0
+            }
+        }
+    }
+
+    for i := 1; i < m; i++ {
+        for j := 1; j < n; j++ {
+            if matrix[i][0] == 0 || matrix[0][j] == 0 {
+                matrix[i][j] = 0
+            }
+        }
+    }
+
+    if firstColHasZero {
+        for _, row := range matrix {
+            row[0] = 0
+        }
+    }
+
+    if firstRowHasZero {
+        clear(matrix[0])
+    }
+}
+```
+
+---
+
+# 生命游戏
+> 难度：中等 
+
+> 标签：数组、模拟、矩阵
+
+> 链接：[生命游戏](https://leetcode.cn/problems/game-of-life/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给定一个包含 m × n 个格子的面板，每一个格子都可以看成是一个细胞。每个细胞都具有一个初始状态： 1 即为`活细胞`（live），或 0 即为`死细胞`（dead）。每个细胞与其八个相邻位置（水平，垂直，对角线）的细胞都遵循以下四条生存定律：
+
+- 如果活细胞周围八个位置的活细胞数少于两个，则该位置活细胞死亡；
+- 如果活细胞周围八个位置有两个或三个活细胞，则该位置活细胞仍然存活；
+- 如果活细胞周围八个位置有超过三个活细胞，则该位置活细胞死亡；
+- 如果死细胞周围正好有三个活细胞，则该位置死细胞复活；
+
+下一个状态是通过将上述规则同时应用于当前状态下的每个细胞所形成的，其中细胞的出生和死亡是**同时**发生的。给你 m x n 网格面板`board`的当前状态，返回下一个状态。
+
+给定当前`board`的状态，更新`board`到下一个状态。
+
+**注意**你不需要返回任何东西。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+用四个变量去更好的记录状态：
+- -1 原来活现在死
+-  0 原来死现在死
+-  1 原来活现在活
+-  2 原来死现在活 
+详细的讲解看[生命游戏-题解](https://leetcode.cn/problems/game-of-life/solutions/396007/gong-cheng-hua-dai-ma-jian-hua-si-kao-by-wolf8813)
+
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出详细代码：
+
+```go
+func gameOfLife(board [][]int)  {
+    for i, row := range board {
+        for j, _ := range row {
+            temp := isAlive(i-1,j-1,board) + isAlive(i-1,j,board) + isAlive(i-1,j+1,board) + isAlive(i,j-1,board) + isAlive(i,j+1,board) + isAlive(i+1,j-1,board) + isAlive(i+1,j,board) + isAlive(i+1,j+1,board)
+            if (temp < 2 && board[i][j] == 1) {
+                board[i][j] = -1
+            } else if (temp > 3 && board[i][j] == 1) {
+                board[i][j] = -1
+            } else if (temp == 3 && board[i][j] == 0) {
+                board[i][j] = 2
+            }
+        }
+    }
+    for i, row := range board {
+        for j, _ := range row {
+            if (board[i][j] == 1 || board[i][j] == 2) {
+                board[i][j] = 1
+            }else {
+                board[i][j] = 0
+            }
+        }
+    }
+}
+
+func isAlive(i int, j int, board [][]int) int {
+    if (i < 0 || i >= len(board) || j < 0 || j >= len(board[0])) {
+        return 0
+    }
+    if (board[i][j] == 1 || board[i][j] == -1) {
+        return 1
+    }
+    return 0
+}
+```
