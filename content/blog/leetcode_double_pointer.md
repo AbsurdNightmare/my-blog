@@ -76,6 +76,9 @@ func isPalindrome(s string) bool {
 }
 ```
 
+{{< /tab >}}
+{{< /tabgroup >}}
+
 ---
 
 # 判断子序列
