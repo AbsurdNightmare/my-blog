@@ -204,6 +204,7 @@ func isIsomorphic(s, t string) bool {
 {{< /tab >}}
 {{< tab name="解法" >}}
 **哈希表**
+
 只是位置不一样但是每个字母的数量是一样的，那我们就可以用哈希表记录 s 中的所有字母数量，然后检查 t 中字母是否符合。
 
 {{< /tab >}}
@@ -240,6 +241,7 @@ func isAnagram(s string, t string) bool {
 {{< /tab >}}
 {{< tab name="解法" >}}
 **哈希表**
+
 字母异位词除了上一道题的数量相同，还有一个特性就是按照字母排序之后是一样的。对于这道题这么多词我们就得采用这种判断方式。用哈希表记录，key 是每个词排序后的结果，value 是原来状态。
 
 {{< /tab >}}
@@ -280,6 +282,7 @@ func groupAnagrams(strs []string) [][]string {
 {{< /tab >}}
 {{< tab name="解法" >}}
 **哈希表**
+
 两数之和为`target`，那么当我固定一个值 a，我就要找数组里是否存在一个值为`target - a`的数。所以我们可以遍历数组，每次都在哈希表里查找，如果找到了就返回，没找到就把当前值加入哈希表中。
 
 {{< /tab >}}
@@ -398,6 +401,7 @@ func bitSquareSum(n int) int {
 {{< /tab >}}
 {{< tab name="解法" >}}
 **哈希表**
+
 和两数之和思路差不多，就是多一个差值的判断。
 
 {{< /tab >}}
@@ -421,3 +425,49 @@ func containsNearbyDuplicate(nums []int, k int) bool {
 ```
 
 ---
+
+# 最长连续序列
+> 难度：中等
+
+> 标签：哈希表、数组、并查集
+
+> 链接：[最长连续序列](https://leetcode.cn/problems/longest-consecutive-sequence/description/?envType=study-plan-v2&envId=top-interview-150)
+
+{{< tabgroup >}}
+{{< tab name="题干" >}}
+给定一个未排序的整数数组`nums`，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
+
+请你设计并实现时间复杂度为$O(n)$的算法解决此问题。
+
+{{< /tab >}}
+{{< tab name="解法" >}}
+**哈希表**
+
+这道题要求用$O(n)$的算法，那就不能排序了。我们可以先把所有的数存到一个布尔哈希里，然后遍历哈希表。如果当前值的前一个数字不存在，说明这个值是一个序列的开头，我们就一个一个查找哈希表，看往后的序列可以进行到哪，然后再更新最大值。
+
+{{< /tab >}}
+{{< /tabgroup >}}
+
+下面给出详细代码：
+
+```go
+func longestConsecutive(nums []int) int {
+	hash := map[int]bool{}
+	for _, v := range nums {
+		hash[v] = true
+	}
+	ans := 0
+	for x := range hash {
+		if hash[x-1] {
+			continue
+		}
+
+		y := x + 1
+		for hash[y] {
+			y++
+		}
+		ans = max(ans, y-x)
+	}
+	return ans
+}
+```
